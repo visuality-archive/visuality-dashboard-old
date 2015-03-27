@@ -1,14 +1,16 @@
 require "net/http"
 require "net/https"
 
-SCHEDULER.every '5s', :first_in => 0 do
+SCHEDULER.every '30s', :first_in => 0 do
   urls = JSON.parse($redis.get('servers'))
   bads_urls = Hash.new({ value: 0 })
   urls.each do |url|
     uri = URI.parse(url)
     http = Net::HTTP.new(uri.host, uri.port)
-    http.use_ssl = true
-    http.verify_mode = OpenSSL::SSL::VERIFY_NONE
+    if uri.scheme == 'https'
+      http.use_ssl = true
+      http.verify_mode = OpenSSL::SSL::VERIFY_NONE
+    end
     request = Net::HTTP::Get.new(uri.request_uri)
     response = http.request(request)
     if response.is_a? Net::HTTPSuccess
