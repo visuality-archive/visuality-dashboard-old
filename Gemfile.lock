@@ -48,6 +48,7 @@ GEM
       rack
     rack-test (0.6.3)
       rack (>= 1.0)
+    redis (3.2.1)
     rufus-scheduler (2.0.24)
       tzinfo (>= 0.3.22)
     sass (3.2.19)
@@ -101,4 +102,5 @@ DEPENDENCIES
   dotenv
   haml
   octokit
+  redis
   twitter
