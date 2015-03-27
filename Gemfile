@@ -2,8 +2,9 @@ source 'https://rubygems.org'
 
 gem 'dashing'
 gem 'dotenv'
-gem 'twitter'
 gem 'haml'
+gem 'octokit'
+gem 'twitter'
 
 group :development do
   gem 'byebug'
