@@ -44,6 +44,21 @@ post '/add_server' do
   end
 end
 
+post '/remove_server' do
+  request.body.rewind
+  body = JSON.parse(request.body.read)
+  auth_token = body.delete("auth_token")
+  if !settings.auth_token || settings.auth_token == auth_token
+    urls = JSON.parse($redis.get('servers'))
+    urls.delete(body['url'])
+    $redis.set('servers', urls.to_json)
+    204
+  else
+    status 401
+    "Invalid API key\n"
+  end
+end
+
 map Sinatra::Application.assets_prefix do
   run Sinatra::Application.sprockets
 end
