@@ -4,7 +4,7 @@ require 'dotenv'
 Dotenv.load
 
 configure do
-  set :auth_token, ENV['AUTHENTICATION_TOKEN']
+  set :auth_token, ENV['AUTH_TOKEN']
 
   helpers do
     def protected!
