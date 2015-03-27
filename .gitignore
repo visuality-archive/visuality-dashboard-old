@@ -2,3 +2,5 @@
 .bundle/
 .env
 history.yml
+jobs/google-key.p12
+

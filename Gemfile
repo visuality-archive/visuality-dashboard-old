@@ -6,6 +6,7 @@ gem 'dotenv'
 gem 'twitter'
 gem 'redis'
 gem 'haml'
+gem 'google-api-client'
 
 group :development do
   gem 'byebug'
