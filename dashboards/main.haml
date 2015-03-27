@@ -4,14 +4,12 @@
 .gridster
   %ul
     %li{"data-row" => 1, "data-col" => 1, "data-sizex" => 2, "data-sizey" => 1}
-      %div{"data-id" => "welcome", "data-view" => "Text", "data-title" => "Hello", "data-text" => "Visuality dashboard", "data-moreinfo" => "More info"}
-    %li{"data-row" => 1, "data-col" => 3, "data-sizex" => 2, "data-sizey" => 1}
       %div{"data-id" => "ghstats", "data-view" => "Codestats", "data-additions" => 0, "data-deletions" => 0, "data-commits" => 0, "data-prs" => 0}
-    %li{"data-row": 2,"data-col": 1, "data-sizex": 2, "data-sizey": 1}
+    %li{"data-row": 1,"data-col": 2, "data-sizex": 2, "data-sizey": 1}
       %div{"data-id": "clock", "data-view": "Clock"}
-    %li{"data-row" => 2, "data-col" => 3, "data-sizex" => 2, "data-sizey" => 1 }
+    %li{"data-row" => 2, "data-col" => 1, "data-sizex" => 2, "data-sizey" => 1 }
       %div{"data-id" => "servers", "data-view" => "List", "data-title" => "Server responses", "data-unordered" => true}
   
     -# Google analytics visitors this month
-    %li{data: {row:"1", col:"3", sizex:"1", sizey:"1"}} 
+    %li{data: {row:"2", col:"2", sizex:"1", sizey:"1"}} 
       %div{data:{id:"visitor_count", view:"Number", title:"Visitors This Month"}}
