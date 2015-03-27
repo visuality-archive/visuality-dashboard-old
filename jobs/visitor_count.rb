@@ -3,12 +3,12 @@ require 'date'
 
 # Update these to match your own apps credentials
 service_account_email = '177887481464-ilqeksv1fkb3ncp2dqjklus45sddd7aq@developer.gserviceaccount.com'# Email of service account
-key_file = 'google-key.p12' # File containing your private key
+key_file = './jobs/google-key.p12' # File containing your private key
 key_secret = 'notasecret' # Password to unlock private key
 profileID = '7168000' # Analytics profile ID.
 
 # Get the Google API client
-client = Google::APIClient.new(:application_name => '[YOUR APPLICATION NAME]',
+client = Google::APIClient.new(:application_name => 'Visuality dashboard',
   :application_version => '0.01')
 
 # Load your credentials for the service account
