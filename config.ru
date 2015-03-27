@@ -10,8 +10,8 @@ configure :development do
 end
 
 configure :production do
-    uri = URI.parse(ENV["REDISGREEN_URL"])
-    $redis = Redis.new(url: ENV["REDISGREEN_URL"], driver: :hiredis)
+    uri = URI.parse(ENV["REDISCLOUD_URL"])
+    $redis = Redis.new(url: ENV["REDISCLOUD_URL"], driver: :hiredis)
 end
 
 configure do
