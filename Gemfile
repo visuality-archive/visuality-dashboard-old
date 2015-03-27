@@ -11,5 +11,6 @@ gem 'twitter'
 
 group :development do
   gem 'byebug'
+  gem 'pry'
 end
 

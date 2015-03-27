@@ -1,0 +1,28 @@
+.widget-pullrequests {
+  background-color: #9c4274;
+
+  .pr-holder {
+    text-align: left;
+  }
+
+  .pr-box {
+    background-color: rgba(255, 255, 255, 0.1);
+    padding: 10px;
+    margin: 10px;
+  }
+
+  .pr-title, .pr-repo, .pr-user {
+    font-weight: bold;
+  }
+
+  .pr-title {
+    display: block;
+    font-size: 140%;
+  }
+
+  .pr-date {
+    color: rgba(255, 255, 255, 0.5);
+    font-size: 80%;
+  }
+}
+
