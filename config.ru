@@ -5,6 +5,7 @@ Dotenv.load
 
 configure do
   set :auth_token, ENV['AUTH_TOKEN']
+  set :default_dashboard, 'main'
 
   helpers do
     def protected!
