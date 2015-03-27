@@ -5,15 +5,11 @@ require "redis"
 
 Dotenv.load
 
-configure :development do
+if ENV["REDISCLOUD_URL"].nil?
   $redis = Redis.new
-  puts "Connecting locally to redis"
-  puts $redis.inspect
-end
-
-configure :production do
-    uri = URI.parse(ENV["REDISCLOUD_URL"])
-    $redis = Redis.new(url: ENV["REDISCLOUD_URL"], driver: :hiredis)
+else
+  uri = URI.parse(ENV["REDISCLOUD_URL"])
+  $redis = Redis.new(url: ENV["REDISCLOUD_URL"], driver: :hiredis)
 end
 
 configure do
