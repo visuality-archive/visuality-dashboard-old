@@ -2,23 +2,24 @@ require "net/http"
 require "net/https"
 
 SCHEDULER.every '30s', :first_in => 0 do
-  output_hash = Hash.new({ value: 0 })
+  output = []
 
   if $redis.exists("servers")
     $redis.sscan_each("servers") do |url|
       begin
         destination_url, response = fetch(url)
         if url == destination_url
-          output_hash[url] = {label: url, value: response }
+          output << {label: url, value: response }
         else
-          output_hash[url] = {label: url, value: "REDIRECTION (#{destination_url} - #{response})"}
+          output << {label: url, value: "REDIRECTION (#{destination_url} - #{response})"}
         end
       rescue StandardError => e
-        output_hash[url] = {label: url, value: 'BAD URL' }
+        output << {label: url, value: 'BAD URL' }
       end
     end
   end
-  send_event('servers', { items: output_hash.values })
+
+  send_event('servers', { items: output })
 end
 
 def fetch(url, limit = 10)
