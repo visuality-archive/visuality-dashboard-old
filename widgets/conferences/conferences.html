@@ -1,0 +1,10 @@
+<h1 class="title" data-bind="title"></h1>
+
+<ul>
+  <li data-foreach-conference="conferences">
+    <a class="title" data-showif="conference.url" data-bind-href="conference.url" data-bind="conference.title"></a>
+    <span class="title" data-hideif="conference.url" data-bind="conference.title"></span>
+    <span class="date" data-bind="conference.date"></span>
+  </li>
+</ul>
+
