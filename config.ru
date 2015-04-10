@@ -8,7 +8,6 @@ Dotenv.load
 if ENV["REDISCLOUD_URL"].nil?
   $redis = Redis.new
 else
-  uri = URI.parse(ENV["REDISCLOUD_URL"])
   $redis = Redis.new(url: ENV["REDISCLOUD_URL"], driver: :hiredis)
 end
 
@@ -46,9 +45,12 @@ post '/add_server' do
       add_to_redis('servers', body['url'])
       204
     else
-      status 401
-      "Invalid API key\n"
+      401
+      "Invalid URL key\n"
     end
+  else
+    401
+    "Invalid API key\n"
   end
 end
 
@@ -58,7 +60,7 @@ post '/remove_server' do
     remove_from_redis('servers', body['url'])
     204
   else
-    status 401
+    401
     "Invalid API key\n"
   end
 end
@@ -69,7 +71,7 @@ post '/add_to_shop_list' do
     $redis.mapped_hmset('shop', {body['key'] => body['value']})
     204
   else
-    status 401
+    401
     "Invalid API key\n"
   end
 end
@@ -80,7 +82,7 @@ post '/remove_to_shop_list' do
     $redis.hdel('shop', body['key'])
     204
   else
-    status 401
+    401
     "Invalid API key\n"
   end
 end
@@ -91,7 +93,7 @@ post '/clear_shop_list' do
     $redis.del('shop')
     204
   else
-    status 401
+    401
     "Invalid API key\n"
   end
 end
