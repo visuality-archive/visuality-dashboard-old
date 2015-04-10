@@ -99,6 +99,50 @@ post '/clear_shop_list' do
   end
 end
 
+post '/add_conference' do
+  body = JSON.parse(request.body.read)
+  if check_request_authentication?(body)
+    list = []
+
+    if $redis.exists("conferences")
+      list = JSON.parse($redis.get("conferences"))
+    end
+
+    list << {
+      title: body["title"],
+      date: body["date"],
+      url: body["url"]
+    }
+
+    $redis.set("conferences", list.to_json)
+    status 204
+  else
+    status 401
+    "Invalid API key\n"
+  end
+end
+
+post '/remove_conference' do
+  body = JSON.parse(request.body.read)
+  if check_request_authentication?(body)
+    list = []
+
+    if $redis.exists("conferences")
+      list = JSON.parse($redis.get("conferences"))
+    end
+
+    list.reject! do |item|
+      item["title"] == body["title"]
+    end
+
+    $redis.set("conferences", list.to_json)
+    status 204
+  else
+    status 401
+    "Invalid API key\n"
+  end
+
+end
 
 map Sinatra::Application.assets_prefix do
   run Sinatra::Application.sprockets
