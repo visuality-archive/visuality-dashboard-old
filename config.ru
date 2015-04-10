@@ -37,11 +37,11 @@ post '/add_server' do
         status 304
       end
     else
-      401
+      status 401
       "Invalid URL key\n"
     end
   else
-    401
+    status 401
     "Invalid API key\n"
   end
 end
@@ -55,7 +55,7 @@ post '/remove_server' do
       status 304
     end
   else
-    401
+    status 401
     "Invalid API key\n"
   end
 end
@@ -69,7 +69,7 @@ post '/add_to_shop_list' do
       status 304
     end
   else
-    401
+    status 401
     "Invalid API key\n"
   end
 end
@@ -83,7 +83,7 @@ post '/remove_from_shop_list' do
       status 304
     end
   else
-    401
+    status 401
     "Invalid API key\n"
   end
 end
@@ -94,7 +94,7 @@ post '/clear_shop_list' do
     $redis.del('shop')
     status 204
   else
-    401
+    status 401
     "Invalid API key\n"
   end
 end
