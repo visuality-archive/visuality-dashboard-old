@@ -1,14 +1,18 @@
-require 'dashing'
 require 'dotenv'
 require 'haml'
-require "redis"
 
+# Load the ENV vars first
 Dotenv.load
 
-if ENV["REDISCLOUD_URL"].nil?
-  $redis = Redis.new
-else
-  $redis = Redis.new(url: ENV["REDISCLOUD_URL"], driver: :hiredis)
+require 'dashing'
+
+# Check key types and remove them if they're deprecated
+if $redis.type("servers") != "set"
+  $redis.del("servers")
+end
+
+if $redis.type("shop") != "set"
+  $redis.del("shop")
 end
 
 configure do
@@ -20,30 +24,18 @@ configure do
       auth_token = body.delete("auth_token")
       !settings.auth_token || settings.auth_token == auth_token ? true : false
     end
-
-    def add_to_redis(key, value)
-      values = JSON.parse($redis.get(key))
-      values << value
-      $redis.set(key, values.to_json)
-    end
-
-    def remove_from_redis(key, value)
-      values = JSON.parse($redis.get(key))
-      values.delete(value)
-      $redis.set(key, values.to_json)
-    end
   end
-
-  $redis.setnx('servers', [].to_json)
-  $redis.mapped_hmset('shop', {'piwko' => 'skrzynka'})
 end
 
 post '/add_server' do
   body = JSON.parse(request.body.read)
   if check_request_authentication?(body)
     if body['url'] =~ URI::regexp
-      add_to_redis('servers', body['url'])
-      204
+      if $redis.sadd("servers", body["url"])
+        status 204
+      else
+        status 304
+      end
     else
       401
       "Invalid URL key\n"
@@ -57,8 +49,11 @@ end
 post '/remove_server' do
   body = JSON.parse(request.body.read)
   if check_request_authentication?(body)
-    remove_from_redis('servers', body['url'])
-    204
+    if $redis.srem("servers", body["url"])
+      status 204
+    else
+      status 304
+    end
   else
     401
     "Invalid API key\n"
@@ -68,19 +63,25 @@ end
 post '/add_to_shop_list' do
   body = JSON.parse(request.body.read)
   if check_request_authentication?(body)
-    $redis.mapped_hmset('shop', {body['key'] => body['value']})
-    204
+    if $redis.sadd("shop", body["key"])
+      status 204
+    else
+      status 304
+    end
   else
     401
     "Invalid API key\n"
   end
 end
 
-post '/remove_to_shop_list' do
+post '/remove_from_shop_list' do
   body = JSON.parse(request.body.read)
   if check_request_authentication?(body)
-    $redis.hdel('shop', body['key'])
-    204
+    if $redis.srem("shop", body["key"])
+      status 204
+    else
+      status 304
+    end
   else
     401
     "Invalid API key\n"
@@ -91,7 +92,7 @@ post '/clear_shop_list' do
   body = JSON.parse(request.body.read)
   if check_request_authentication?(body)
     $redis.del('shop')
-    204
+    status 204
   else
     401
     "Invalid API key\n"
