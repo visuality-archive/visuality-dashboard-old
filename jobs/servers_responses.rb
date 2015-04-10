@@ -5,33 +5,41 @@ SCHEDULER.every '30s', :first_in => 0 do
   output_hash = Hash.new({ value: 0 })
 
   if $redis.exists("servers")
-    urls = []
-    $redis.sscan_each("servers") do |item|
-      urls << item
-    end
-
-    urls.each do |url|
-      uri = URI.parse(url)
-      http = Net::HTTP.new(uri.host, uri.port)
-      if uri.scheme == 'https'
-        http.use_ssl = true
-        http.verify_mode = OpenSSL::SSL::VERIFY_NONE
-      end
-      request = Net::HTTP::Get.new(uri.request_uri)
-
+    $redis.sscan_each("servers") do |url|
       begin
-        response = http.request(request)
-        if response.is_a? Net::HTTPSuccess
-          output_hash[url] = {label: url, value: 'OK' }
-        elsif response.is_a? Net::HTTPRedirection
-          output_hash[url] = {label: url, value: 'REDIRECTION' }
+        destination_url, response = fetch(url)
+        if url == destination_url
+          output_hash[url] = {label: url, value: response }
         else
-          output_hash[url] = {label: url, value: 'ERROR' }
+          output_hash[url] = {label: url, value: "REDIRECTION (#{destination_url} - #{response})"}
         end
-      rescue Exception => e
-         output_hash[url] = {label: url, value: 'BAD URL' }
+      rescue StandardError => e
+        output_hash[url] = {label: url, value: 'BAD URL' }
       end
     end
   end
   send_event('servers', { items: output_hash.values })
+end
+
+def fetch(url, limit = 10)
+  return url, 'HTTP redirect too deep' if limit == 0
+
+  uri = URI.parse(url)
+  http = Net::HTTP.new(uri.host, uri.port)
+  if uri.scheme == 'https'
+    http.use_ssl = true
+    http.verify_mode = OpenSSL::SSL::VERIFY_NONE
+  end
+
+  request = Net::HTTP::Get.new(uri.request_uri)
+  response =   http.request(request)
+
+  case response
+  when Net::HTTPSuccess
+    return url, 'OK'
+  when Net::HTTPRedirection
+    return fetch(response['location'], limit - 1)
+  else
+    return url, response.code
+  end
 end
